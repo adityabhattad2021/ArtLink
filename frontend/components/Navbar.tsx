@@ -28,6 +28,8 @@ export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
   const { address, connect, loginWithWallet } = useStateContext();
   const { data: session } = useSession();
+  console.log(session);
+  
 
   return (
     <Box>
