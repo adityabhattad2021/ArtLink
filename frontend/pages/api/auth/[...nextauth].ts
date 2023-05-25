@@ -18,11 +18,13 @@ export default NextAuth({
   ],
   callbacks: {
     async session({ session, token }) {
-      const sessionWithAddress =await authSession({ session, token });
+      const sessionWithAddress = authSession({ session, token });
       await connectToDB();
       const sessionUser = await User.findOne({
+        // @ts-ignore
         address: sessionWithAddress.user.address,
       });
+    //   @ts-ignore
       sessionWithAddress.user.id = sessionUser._id.toString();
       return sessionWithAddress;
     },

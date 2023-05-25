@@ -11,9 +11,7 @@ export async function connectToDB() {
         return;
     }
 
-    try {
-        console.log(process.env.MONGODB_URI);
-        
+    try {        
         await mongoose.connect(process.env.MONGODB_URI || "",{
             dbName:"artlink",
             useNewUrlParser:true,
