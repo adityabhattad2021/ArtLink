@@ -2,22 +2,31 @@ import type { AppProps } from "next/app";
 import { ThirdwebProvider } from "@thirdweb-dev/react";
 import { StateContextProvider } from "../context";
 import { ChakraProvider } from "@chakra-ui/react";
+import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
+import type { Session } from "next-auth";
 
 // This is the chain your dApp will work on.
 // Change this to the chain your app is built for.
 // You can also import additional chains from `@thirdweb-dev/chains` and pass them directly.
 const activeChain = "mumbai";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps<{ session: Session }>) {
   return (
-    <ThirdwebProvider activeChain={activeChain}>
-      <ChakraProvider>
-        <StateContextProvider>
-          <Component {...pageProps} />
-        </StateContextProvider>
-      </ChakraProvider>
-    </ThirdwebProvider>
+    <SessionProvider session={session}>
+      <ThirdwebProvider
+        activeChain={activeChain}
+        authConfig={{
+          domain: process.env.NEXT_PUBLIC_THIRDWEB_AUTH_DOMAIN || "",
+        }}
+      >
+        <ChakraProvider>
+          <StateContextProvider>
+            <Component {...pageProps} />
+          </StateContextProvider>
+        </ChakraProvider>
+      </ThirdwebProvider>
+    </SessionProvider>
   );
 }
 

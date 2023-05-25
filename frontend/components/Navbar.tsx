@@ -20,11 +20,14 @@ import {
 } from '@chakra-ui/icons';
 import logo from "../public/logo.svg";
 import Image from 'next/image';
+import { useStateContext } from '../context';
+import { useSession } from 'next-auth/react';
 
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
-
+  const { address, connect, loginWithWallet } = useStateContext();
+  const { data: session } = useSession();
 
   return (
     <Box>
@@ -52,8 +55,8 @@ export default function WithSubnavigation() {
             aria-label={'Toggle Navigation'}
           />
         </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} marginLeft={{base:0,md:7}}>
-          <Image src={logo} alt="logo"  width={150} height={150} />
+        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} marginLeft={{ base: 0, md: 7 }}>
+          <Image src={logo} alt="logo" width={150} height={150} />
           <Flex display={{ base: 'none', md: 'flex' }} align={{ base: "center" }} ml={10}>
             <DesktopNav />
           </Flex>
@@ -65,18 +68,35 @@ export default function WithSubnavigation() {
           direction={'row'}
           margin={{ base: 0, md: 8 }}
           spacing={6}>
-          <Button
-            as={'a'}
-            fontSize={'lg'}
-            fontWeight={600}
-            color={'white'}
-            bg={'blue.400'}
-            href={'/login'}
-            _hover={{
-              bg: 'blue.300',
-            }}>
-            Login
-          </Button>
+          {
+            address ? !session && (
+              <Button
+                as={'a'}
+                fontSize={'lg'}
+                fontWeight={600}
+                color={'white'}
+                bg={'blue.400'}
+                onClick={()=>loginWithWallet()}
+                _hover={{
+                  bg: 'blue.300',
+                }}>
+                Login
+              </Button>
+            ) : (
+              <Button
+                as={'a'}
+                fontSize={'lg'}
+                fontWeight={600}
+                color={'white'}
+                bg={'blue.400'}
+                onClick={()=>connect()}
+                _hover={{
+                  bg: 'blue.300',
+                }}>
+                Connect
+              </Button>
+            )
+          }
         </Stack>
       </Flex>
 
@@ -161,7 +181,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         )}
       </Flex>
 
-      <Collapse in={isOpen} animateOpacity style={{ marginTop: '0!important'}}>
+      <Collapse in={isOpen} animateOpacity style={{ marginTop: '0!important' }}>
         <Stack
           mt={2}
           pl={4}
